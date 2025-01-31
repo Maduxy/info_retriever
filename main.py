@@ -9,7 +9,7 @@ app = FastAPI()
 # Adding CORS Handling
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -19,5 +19,5 @@ app.add_middleware(
 def my_info():
     return {"email": "onyejiakamadu@gmail.com",
             "current_datetime":datetime.now(pytz.utc).isoformat() ,
-            "github_url": "to be determined"}
+            "github_url": "https://github.com/Maduxy/info_retriever"}
 
