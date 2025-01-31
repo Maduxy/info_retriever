@@ -18,6 +18,6 @@ app.add_middleware(
 @app.get("/profile")
 def my_info():
     return {"email": "onyejiakamadu@gmail.com",
-            "current_datetime":datetime.now(pytz.utc).isoformat() + "Z" ,
+            "current_datetime":datetime.now(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ") ,
             "github_url": "https://github.com/Maduxy/info_retriever"}
 
