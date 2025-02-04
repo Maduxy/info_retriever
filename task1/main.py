@@ -12,32 +12,34 @@ app = FastAPI()
 NUMBERS_API_URL = "http://numbersapi.com"
 
 
-@app.get ("/api/classify-number/")
+# Custom error handler for invalid inputs
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    number_str = request.query_params.get('number')
+    return JSONResponse(
+        status_code=400,
+        content={"number": number_str, "error": True}
+    )
+
+@app.get ("/api/classify-number")
 
 def mth_num(number:int):
-
-    if number < 0:
-        # raise HTTPException(status_code=400, detail="Number must be a positive integer.")
-        return JSONResponse(
-        status_code=400,
-        content={"number": "alphabet","error": "true"},
-        )
     
           
     response = requests.get(f"{NUMBERS_API_URL}/{number}/math?json")
     data = response.json() if response.status_code == 200 else {"error": "Could not fetch fact"}
-    text = f"{data.get('text', 'No text key found')} //gotten from the numbers API"
+    text = data.get('text', 'No text key found')
 
     
     is_prime = sympy.isprime(number)
 
     is_perfect = sympy.is_perfect(number)
 
-    
-    num_str=str(number)
+
+    num_str=str(abs(number))
     num_list = list(map(int,num_str))
     digit_sum= sum(num_list)
-    
+
 
     # # Armstrong
     n= len(num_list)
@@ -46,14 +48,14 @@ def mth_num(number:int):
     for i in num_list:
         x = i**n
         new_list.append(x)
-
-    if (sum(new_list)== number) & (number % 2 == 0):
-        property = ["Armstrong","even"]
-    elif (sum(new_list)== number) & (number % 2 != 0):
-        property = ["Armstrong","odd"]
-    elif (sum(new_list)!= number) & (number % 2 == 0):
+    numbers = abs(number)
+    if (sum(new_list)== numbers) & (numbers % 2 == 0):
+        property = ["armstrong","even"]
+    elif (sum(new_list)== numbers) & (numbers % 2 != 0):
+        property = ["armstrong","odd"]
+    elif (sum(new_list)!= numbers) & (numbers % 2 == 0):
         property = ["even"]
-    elif (sum(new_list)!= number) & (number % 2 != 0):
+    elif (sum(new_list)!= numbers) & (numbers % 2 != 0):
         property = ["odd"]
 
     return { "number": number,
